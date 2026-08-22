@@ -1,0 +1,30 @@
+# lexdi-wordlists
+
+Community-contributed word lists for [Lexdi](https://lexdi.app) — jargon, coined terms, and dated slang that macOS and iOS autocorrect do not know yet.
+
+## What's here
+
+- `lists/` — word-list sources (`.lexdi.tsv`), grouped by category. `lists/community/` holds contributor-proposed lists.
+- `FORMAT.md` — the word-list file format, for contributors and for anyone building their own tooling against `.lexdi` files.
+- `CONTRIBUTING.md` — how to propose a word or a list.
+
+## Using a list in Lexdi
+
+Open the app, go to list subscriptions, and add a list by its published URL — shown on each list's page at lexdi.app — or browse and subscribe directly from [lexdi.app/lists](https://lexdi.app/lists).
+
+## Browsing lists
+
+Rendered, human-readable versions of every list are at [lexdi.app/lists](https://lexdi.app/lists).
+
+## Contributing
+
+See `CONTRIBUTING.md`. If you're using an AI coding assistant, `AGENTS.md` has a short set of notes for it.
+
+## Licensing
+
+Two licenses, because the data and the code here have different norms:
+
+- **Word lists and everything else that is data** — CC0 1.0 Universal, a public domain dedication. See `LICENSE`. This covers every file under `lists/`, and it is what a word contribution is dedicated under.
+- **Any tooling code that lands in this repo** — MIT. See `LICENSE-CODE`.
+
+CC0 is the right fit for the lists because they are closer to facts than to authorship: a word either is or is not in use as jargon. Dedicating them to the public domain keeps them reusable by Lexdi, by other dictionary and autocorrect tools, and by anyone else, with no attribution bookkeeping for lists that accumulate hundreds of single-word contributions.

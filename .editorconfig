@@ -1,0 +1,27 @@
+# EditorConfig http://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+indent_style = tab
+indent_size = 2
+
+[*.md]
+# Markdown: trailing whitespace can be significant (line breaks)
+trim_trailing_whitespace = false
+
+[*.{yaml,yml}]
+indent_style = space
+tab_width = 2
+
+[*.lexdi.tsv]
+# Tabs are the column delimiter — never expand them, never trim a trailing
+# empty column, which is how a blank optional field is spelled.
+indent_style = tab
+trim_trailing_whitespace = false

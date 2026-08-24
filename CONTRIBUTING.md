@@ -16,7 +16,7 @@ Word lists live as `name.lexdi.tsv` files under `lists/` — tab-separated, one 
 
 ## Proposing a new list
 
-A new list is a new `lists/community/<name>.lexdi.tsv` file with a header row and at least one word. Say in the pull request what the list is for and who would subscribe to it. Lists that overlap heavily with an existing one are usually better as additions to that list.
+A new list is a new `lists/community/<name>.lexdi.tsv` file with a header row and at least one word. Say in the pull request what the list is for and who would subscribe to it. Niche lists are welcome — a single ecosystem's terminology, Rust say, makes a good list. Lists that overlap heavily with an existing one are usually better as additions to that list.
 
 ## Your contribution is CC0
 
@@ -24,7 +24,7 @@ By contributing a word or a word list here, you are dedicating that contribution
 
 ## Communicating
 
-Open an issue to ask a question, propose a list before writing it, or report something wrong in an existing list. Pull request review comments are the place for discussion about a specific change. Please keep one logical change per pull request — one list, or a small related batch of words — which makes review quick and keeps a problem in one word from holding up the rest.
+Open an issue to ask a question, propose a list before writing it, or report something wrong in an existing list.
 
 ## Code of conduct
 

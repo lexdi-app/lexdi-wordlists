@@ -20,7 +20,7 @@ A new list is a new `lists/community/<name>.lexdi.tsv` file with a header row an
 
 ## Your contribution is CC0
 
-By contributing a word or a word list here, you are dedicating that contribution to the public domain under this repo's `LICENSE` (CC0 1.0 Universal). This keeps the lists maximally reusable — by Lexdi, by other dictionary and autocorrect tools, by anyone. Any code contributed here is MIT instead; see `LICENSE-CODE`.
+By contributing a word or a word list here, you are dedicating that contribution to the public domain under `lists/LICENSE.md` (CC0 1.0 Universal). This keeps the lists maximally reusable — by Lexdi, by other dictionary and autocorrect tools, by anyone. Any code contributed here is MIT instead; see the root `LICENSE.md`.
 
 ## Communicating
 

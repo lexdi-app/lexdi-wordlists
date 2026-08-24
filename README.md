@@ -22,9 +22,6 @@ See `CONTRIBUTING.md`. If you're using an AI coding assistant, `AGENTS.md` has a
 
 ## Licensing
 
-Two licenses, because the data and the code here have different norms:
+The overall license is MIT. See [LICENSE](./LICENSE.md).
 
-- **Word lists and everything else that is data** — CC0 1.0 Universal, a public domain dedication. See `LICENSE`. This covers every file under `lists/`, and it is what a word contribution is dedicated under.
-- **Any tooling code that lands in this repo** — MIT. See `LICENSE-CODE`.
-
-CC0 is the right fit for the lists because they are closer to facts than to authorship: a word either is or is not in use as jargon. Dedicating them to the public domain keeps them reusable by Lexdi, by other dictionary and autocorrect tools, and by anyone else, with no attribution bookkeeping for lists that accumulate hundreds of single-word contributions.
+Word lists are covered by the more permissive CC0 1.0 Universal, a public domain dedication. See [`lists/LICENSE.md`](./lists/LICENSE.md).

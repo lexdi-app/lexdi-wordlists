@@ -1,0 +1,162 @@
+name: PR validation
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-validate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      lists: ${{ steps.filter.outputs.lists }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Detect changed lists
+        id: filter
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BASE_SHA" "$HEAD_SHA"
+          if git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- 'lists/**/*.lexdi.tsv' | grep -q .; then
+            echo "lists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "lists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  apple-filter-check:
+    # NSSpellChecker is the dictionary oracle, so this job cannot move off macOS.
+    runs-on: macos-latest
+    needs: changes
+    if: needs.changes.outputs.lists == 'true'
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Report toolchain
+        run: |
+          sw_vers
+          swift --version
+
+      - name: Build wordlist-filter
+        run: swift build --package-path tools/wordlist-filter --configuration release
+
+      - name: Run filter over changed lists
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          mkdir -p filter-output
+          binary="$(swift build --package-path tools/wordlist-filter --configuration release --show-bin-path)/wordlist-filter"
+          os_version="macos-$(sw_vers -productVersion)"
+
+          git diff --name-only "$BASE_SHA" "$HEAD_SHA" -- 'lists/**/*.lexdi.tsv' > changed-lists.txt
+
+          while IFS= read -r list; do
+            # A list deleted by this pull request has nothing left to classify.
+            [ -f "$list" ] || continue
+            echo "::group::$list"
+            "$binary" --input "$list" --os-version "$os_version" --output-dir filter-output --language en_US
+            echo "::endgroup::"
+          done < changed-lists.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: filter-output
+          path: filter-output/
+          if-no-files-found: ignore
+          retention-days: 7
+
+  lint:
+    runs-on: ubuntu-latest
+    needs: [changes, apple-filter-check]
+    # Runs even when the macOS job was skipped; the filter report degrades to a note.
+    if: always() && needs.changes.result == 'success'
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - uses: actions/download-artifact@v4
+        if: needs.apple-filter-check.result == 'success'
+        continue-on-error: true
+        with:
+          name: filter-output
+          path: filter-output
+
+      - name: Danger
+        env:
+          # A fork's token is read-only; Danger falls back to check output instead of a comment.
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: yarn danger:ci --failOnErrors
+
+  autofix:
+    runs-on: ubuntu-latest
+    needs: changes
+    # A fork's branch is not writable by this workflow, so those pull requests get the
+    # failing lint check and re-sort locally instead.
+    if: needs.changes.outputs.lists == 'true' && github.event.pull_request.head.repo.full_name == github.repository
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Normalize lists
+        id: fix
+        run: yarn fix-lists || true
+
+      - name: Commit fixes
+        # The branch name reaches the shell through the environment, never through
+        # expression interpolation, which a crafted branch name could escape.
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- lists/)" ]; then
+            echo "Lists already normalized."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lists/
+          git commit -m "style(lists): normalize sort order and whitespace"
+          git push origin "HEAD:$HEAD_REF"

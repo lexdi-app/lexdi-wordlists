@@ -1,0 +1,64 @@
+name: Regenerate filtered lists
+
+on:
+  workflow_dispatch:
+    inputs:
+      os-version:
+        description: "macOS release the run reflects, e.g. macos-27.0. Defaults to the runner's own version."
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  regenerate:
+    # NSSpellChecker is the dictionary oracle, so this job cannot move off macOS.
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Report toolchain
+        run: |
+          sw_vers
+          swift --version
+
+      - name: Build wordlist-filter
+        run: swift build --package-path tools/wordlist-filter --configuration release
+
+      - name: Filter every list
+        env:
+          REQUESTED_OS_VERSION: ${{ inputs.os-version }}
+        run: |
+          set -euo pipefail
+          os_version="${REQUESTED_OS_VERSION:-macos-$(sw_vers -productVersion)}"
+          binary="$(swift build --package-path tools/wordlist-filter --configuration release --show-bin-path)/wordlist-filter"
+          output_dir="filtered/$os_version"
+
+          rm -rf "$output_dir"
+          mkdir -p "$output_dir"
+
+          for list in lists/*.lexdi.tsv; do
+            echo "::group::$list"
+            "$binary" --input "$list" --os-version "$os_version" --output-dir "$output_dir" --language en_US
+            echo "::endgroup::"
+          done
+
+          echo "OS_VERSION=$os_version" >> "$GITHUB_ENV"
+
+      - name: Commit results
+        env:
+          TARGET_REF: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          if [ -z "$(git status --porcelain -- filtered/)" ]; then
+            echo "No change for $OS_VERSION."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add filtered/
+          git commit -m "chore(filtered): regenerate for $OS_VERSION"
+          git push origin "HEAD:$TARGET_REF"

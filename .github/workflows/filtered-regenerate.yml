@@ -13,8 +13,10 @@ permissions:
 
 jobs:
   regenerate:
-    # NSSpellChecker is the dictionary oracle, so this job cannot move off macOS.
-    runs-on: macos-latest
+    # NSSpellChecker is the dictionary oracle, so this job cannot move off macOS. The runner is
+    # pinned: classifications are relative to the OS dictionary, so OS bumps happen deliberately,
+    # paired with a filtered/ regeneration.
+    runs-on: macos-26
     permissions:
       contents: write
     steps:

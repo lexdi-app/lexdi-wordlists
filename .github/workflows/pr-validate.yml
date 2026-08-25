@@ -32,8 +32,10 @@ jobs:
           fi
 
   apple-filter-check:
-    # NSSpellChecker is the dictionary oracle, so this job cannot move off macOS.
-    runs-on: macos-latest
+    # NSSpellChecker is the dictionary oracle, so this job cannot move off macOS. The runner is
+    # pinned: classifications are relative to the OS dictionary, so OS bumps happen deliberately,
+    # paired with a filtered/ regeneration.
+    runs-on: macos-26
     needs: changes
     if: needs.changes.outputs.lists == 'true'
     steps:

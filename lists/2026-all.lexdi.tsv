@@ -1,0 +1,5 @@
+# Lexdi word list: 2026 All — combines the year's official leaf lists
+word	action
+2026-ai.lexdi	include
+2026-developer.lexdi	include
+2026-slang.lexdi	include

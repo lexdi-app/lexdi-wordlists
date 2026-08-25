@@ -22,11 +22,7 @@ Checked but never fixed automatically:
 
 ## Pull request and merge conventions
 
-One logical change per pull request — one list, or a small related batch of words.
-
-The `approved-to-ship` label is applied by a maintainer only. Never apply it to a pull request you are working on, and never instruct a human to apply it to their own. The label is what records that maintainer review actually happened, so self-applying it defeats its only purpose.
-
-Once the label is applied, merge and publish are automatic. No follow-up command, deploy step, or manual trigger is expected from a contributor.
+Merging is a maintainer action. Once a pull request is merged, publish is automatic — no follow-up command, deploy step, or manual trigger is expected from a contributor.
 
 ## Contributions are CC0
 

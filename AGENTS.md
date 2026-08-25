@@ -30,4 +30,4 @@ Word-list contributions here are dedicated to the public domain under CC0 on mer
 
 ## Out of scope for this repo
 
-This repo is word-list sources only. The Lexdi app, the tool that runs the system-dictionary comparison, and the internals of the publish pipeline live elsewhere and are not relevant to a contribution here. If a task seems to require changing one of them, it does not belong in this repo — say so rather than working around it.
+This repo is word-list sources, plus `tools/wordlist-filter` which runs the system-dictionary comparison against them. The Lexdi app and the internals of the publish pipeline live elsewhere and are not relevant to a contribution here. If a task seems to require changing one of them, it does not belong in this repo — say so rather than working around it.

@@ -7,6 +7,7 @@ Community-contributed word lists for [Lexdi](https://lexdi.app) — jargon, coin
 - `lists/` — word-list sources (`.lexdi.tsv`).
 - `FORMAT.md` — the word-list file format, for contributors and for anyone building their own tooling against `.lexdi` files.
 - `CONTRIBUTING.md` — how to propose a word or a list.
+- `tools/wordlist-filter/` — CI tool that diffs candidate words against Apple's dictionary (macOS-only).
 
 ## Using a list in Lexdi
 

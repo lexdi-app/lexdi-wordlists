@@ -2,3 +2,11 @@
 node_modules/
 .build/
 .swiftpm/
+
+# Yarn — the node-modules linker keeps only local state here; yarn.lock stays tracked
+.yarn/*
+!.yarn/patches
+.pnp.*
+
+# wordlist-filter output, regenerated per run
+filter-output/

@@ -1,0 +1,23 @@
+{
+	"name": "lexdi-wordlists",
+	"version": "0.0.1",
+	"private": true,
+	"description": "Word-list sources for Lexdi — Node tooling for PR feedback",
+	"scripts": {
+		"danger": "danger",
+		"danger:ci": "danger ci",
+		"danger:local": "danger local",
+		"danger:pr": "danger pr",
+		"fix-lists": "node scripts/fix-lists.mts"
+	},
+	"devDependencies": {
+		"@types/node": "^26.3.0",
+		"danger": "^14.0.5",
+		"typescript": "^5.9.3"
+	},
+	"packageManager": "yarn@4.18.0",
+	"license": "MIT",
+	"engines": {
+		"node": ">=22"
+	}
+}

@@ -8,15 +8,15 @@ Word lists live as `name.lexdi.tsv` files under `lists/` — tab-separated, one 
 
 ## Contributing a word
 
-1. **Find or propose a list.** Add your word to an existing `lists/*.lexdi.tsv` file, or propose a new list under `lists/community/` if it does not fit an existing category.
+1. **Find or propose a list.** Add your word to an existing `lists/*.lexdi.tsv` file, or propose a new list if it does not fit an existing category.
 2. **Edit the TSV.** Add a row. Only `word` and `action` are required, and `action` is almost always `add`; `definition`, `source`, and `added` are optional. Keep rows sorted case-insensitively by `word`, which keeps your diff small and easy to review. The full column rules are in `FORMAT.md`.
-3. **What gets merged.** Words should be genuinely novel vocabulary — technical jargon, coined terms, dated slang — rather than words already in common use. Continuous integration checks new words against the dictionary built into macOS and reports what it found on your pull request. A word the system dictionary already knows is not an automatic rejection, since it may still be worth listing for its definition, but a reviewer may ask about it.
+3. **What gets merged.** Words should be vocabulary the system dictionaries don't know — technical jargon, ecosystem terminology, coined terms, dated slang — rather than everyday words autocorrect already handles. Continuous integration checks new words against the dictionary built into macOS and reports what it found on your pull request. A word the system dictionary already knows is not an automatic rejection, since it may still be worth listing for its definition, but a reviewer may ask about it.
 4. **Open a pull request.** Checks run automatically: formatting, sort order, duplicates, and the dictionary comparison above, with the results reported on your pull request. If your branch lives in this repository, sort-order and whitespace problems are fixed for you and the fix is pushed back to your branch. If you are working from a fork, the check fails instead with instructions, because the automation cannot push to a fork's branch.
 5. **Review and merge.** A maintainer reviews and merges your pull request. Once it merges, publication is automatic — the updated list is compiled and published; nothing further is needed from you, and there is nothing to run locally.
 
 ## Proposing a new list
 
-A new list is a new `lists/community/<name>.lexdi.tsv` file with a header row and at least one word. Say in the pull request what the list is for and who would subscribe to it. Niche lists are welcome — a single ecosystem's terminology, Rust say, makes a good list. Lists that overlap heavily with an existing one are usually better as additions to that list.
+A new list is a new `lists/<name>.lexdi.tsv` file with a header row and at least one word. Say in the pull request what the list is for and who would subscribe to it. Niche lists are welcome — a single ecosystem's terminology, Rust say, makes a good list. Lists that overlap heavily with an existing one are usually better as additions to that list.
 
 ## Your contribution is CC0
 

@@ -4,7 +4,7 @@ Community-contributed word lists for [Lexdi](https://lexdi.app) — jargon, coin
 
 ## What's here
 
-- `lists/` — word-list sources (`.lexdi.tsv`), grouped by category. `lists/community/` holds contributor-proposed lists.
+- `lists/` — word-list sources (`.lexdi.tsv`).
 - `FORMAT.md` — the word-list file format, for contributors and for anyone building their own tooling against `.lexdi` files.
 - `CONTRIBUTING.md` — how to propose a word or a list.
 

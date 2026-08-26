@@ -5,9 +5,9 @@
 	"description": "Word-list sources for Lexdi — Node tooling for PR feedback",
 	"scripts": {
 		"danger": "danger",
-		"danger:ci": "danger ci",
-		"danger:local": "danger local",
-		"danger:pr": "danger pr",
+		"danger:ci": "danger ci -d scripts/danger/dangerfile.ts",
+		"danger:local": "danger local -d scripts/danger/dangerfile.ts -b main",
+		"danger:pr": "danger pr -d scripts/danger/dangerfile.ts",
 		"fix-lists": "node scripts/fix-lists.mts"
 	},
 	"devDependencies": {

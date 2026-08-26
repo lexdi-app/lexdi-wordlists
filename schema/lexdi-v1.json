@@ -1,0 +1,108 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://lexdi.app/schema/lexdi-v1.json",
+	"title": "Lexdi word list",
+	"type": "object",
+	"required": ["_meta_"],
+	"additionalProperties": true,
+	"properties": {
+		"_meta_": {
+			"type": "object",
+			"required": ["name", "schemaVersion"],
+			"additionalProperties": true,
+			"properties": {
+				"name": {
+					"type": "string",
+					"description": "Human-readable list name, e.g. \"2026 AI Terms\". Always a plain string; localized variants go in `nameLocalized`."
+				},
+				"schemaVersion": {
+					"type": "integer",
+					"minimum": 1,
+					"description": "Version of this JSON Schema the document conforms to. Currently 1."
+				},
+				"nameLocalized": {
+					"type": "object",
+					"description": "Optional map of BCP-47 language tag to localized list name. Selection walks the reader's preferred languages and matches by progressive truncation, falling back to `name` (see FORMAT.md §3b).",
+					"propertyNames": { "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$" },
+					"additionalProperties": { "type": "string" }
+				},
+				"languages": {
+					"type": "array",
+					"description": "BCP-47 tags naming the languages this list applies to, e.g. [\"en-US\"] or [\"en-US\", \"en-GB\"]. A list may declare several. Omitting the field means unknown, never English (see FORMAT.md §3b).",
+					"items": {
+						"type": "string",
+						"pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+					}
+				},
+				"version": {
+					"type": "string",
+					"description": "Content-level version stamp, set by the deploy pipeline. Free-form but conventionally YYYY-MM-DD or a semver-like string; used as the change signal once a fetch returns new content."
+				},
+				"last_modified": {
+					"type": "string",
+					"format": "date-time",
+					"description": "ISO 8601 timestamp of the last publish that changed this artifact."
+				},
+				"refreshUrl": {
+					"type": "string",
+					"format": "uri",
+					"description": "Canonical HTTPS URL this list is refreshed from. Takes precedence over the URL the file was fetched from (see FORMAT.md §7c). Present on official and republished lists; absent on one-off hand-authored files with no live source."
+				},
+				"license": {
+					"type": "string",
+					"description": "SPDX license identifier or short license name covering this list's content, e.g. \"CC0-1.0\"."
+				},
+				"sourceUrl": {
+					"type": "string",
+					"format": "uri",
+					"description": "Imported snapshots only: where this snapshot was read from. Stamped by the importing client, absent on published artifacts."
+				},
+				"importedAt": {
+					"type": "string",
+					"format": "date-time",
+					"description": "Imported snapshots only: when this snapshot was taken."
+				},
+				"sourceVersion": {
+					"type": "string",
+					"description": "Imported snapshots only: the source list's `_meta_.version` at import time, if it had one. Used to detect whether a re-fetch found something newer."
+				}
+			}
+		},
+		"includes": {
+			"type": "array",
+			"description": "Ordered references to other lists. Index 0 is highest precedence (see FORMAT.md §5).",
+			"items": { "$ref": "#/$defs/include" }
+		},
+		"entries": {
+			"type": "array",
+			"items": { "$ref": "#/$defs/wordEntry" }
+		}
+	},
+	"$defs": {
+		"wordEntry": {
+			"type": "object",
+			"required": ["word", "action"],
+			"additionalProperties": true,
+			"properties": {
+				"word": { "type": "string", "minLength": 1 },
+				"action": { "type": "string", "enum": ["add", "exclude"] },
+				"definition": { "type": "string" },
+				"source": { "type": "string", "format": "uri" },
+				"added": { "type": "string", "format": "date" }
+			}
+		},
+		"include": {
+			"type": "object",
+			"required": ["ref"],
+			"additionalProperties": true,
+			"properties": {
+				"ref": {
+					"type": "string",
+					"minLength": 1,
+					"format": "uri-reference",
+					"description": "RFC 3986 URI reference naming the list to include: a relative path resolved against this file's own base (FORMAT.md §5), or an absolute HTTPS URL."
+				}
+			}
+		}
+	}
+}

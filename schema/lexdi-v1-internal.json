@@ -1,0 +1,90 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://lexdi.app/schema/lexdi-v1-internal.json",
+	"title": "Lexdi word list (pipeline-internal)",
+	"description": "The published schema plus the fields this repo's publish pipeline stamps and requires. Artifacts are validated against this before release; consumers validate against lexdi-v1.json, which never defines `sourceSha` (FORMAT.md §3a).",
+	"type": "object",
+	"required": ["_meta_"],
+	"additionalProperties": false,
+	"properties": {
+		"_meta_": {
+			"type": "object",
+			"required": ["name", "schemaVersion", "version", "last_modified", "refreshUrl", "license", "sourceSha"],
+			"additionalProperties": false,
+			"properties": {
+				"name": { "type": "string", "minLength": 1 },
+				"schemaVersion": { "type": "integer", "const": 1 },
+				"nameLocalized": {
+					"type": "object",
+					"propertyNames": { "pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$" },
+					"additionalProperties": { "type": "string", "minLength": 1 }
+				},
+				"languages": {
+					"type": "array",
+					"minItems": 1,
+					"items": {
+						"type": "string",
+						"pattern": "^[A-Za-z]{2,8}(-[A-Za-z0-9]{1,8})*$"
+					}
+				},
+				"version": {
+					"type": "string",
+					"pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+					"description": "Publish date of the commit that last changed this artifact's source."
+				},
+				"last_modified": {
+					"type": "string",
+					"pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$",
+					"description": "Commit timestamp of that same commit, normalized to UTC. Wall-clock build time would break byte-identical recompilation."
+				},
+				"refreshUrl": {
+					"type": "string",
+					"format": "uri",
+					"pattern": "^https://"
+				},
+				"license": { "type": "string", "minLength": 1 },
+				"sourceSha": {
+					"type": "string",
+					"pattern": "^[0-9a-f]{64}$",
+					"description": "SHA-256 of the source `.lexdi.tsv` bytes as committed, pre-parse (FORMAT.md §4.4). Carries publish idempotency (§4.5)."
+				}
+			}
+		},
+		"includes": {
+			"type": "array",
+			"minItems": 1,
+			"items": { "$ref": "#/$defs/include" }
+		},
+		"entries": {
+			"type": "array",
+			"minItems": 1,
+			"items": { "$ref": "#/$defs/wordEntry" }
+		}
+	},
+	"$defs": {
+		"wordEntry": {
+			"type": "object",
+			"required": ["word", "action"],
+			"additionalProperties": false,
+			"properties": {
+				"word": { "type": "string", "minLength": 1 },
+				"action": { "type": "string", "enum": ["add", "exclude"] },
+				"definition": { "type": "string", "minLength": 1 },
+				"source": { "type": "string", "format": "uri", "minLength": 1 },
+				"added": { "type": "string", "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$" }
+			}
+		},
+		"include": {
+			"type": "object",
+			"required": ["ref"],
+			"additionalProperties": false,
+			"properties": {
+				"ref": {
+					"type": "string",
+					"minLength": 1,
+					"format": "uri-reference"
+				}
+			}
+		}
+	}
+}

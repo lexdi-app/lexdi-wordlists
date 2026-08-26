@@ -1,0 +1,134 @@
+name: Publish word lists
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "lists/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  # Releases are cut from main in order; cancelling a run mid-publish could strand a tag.
+  group: publish-wordlists
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # `_meta_` stamps come from each source's last commit, so the full history
+          # must be present for `git log` to find it.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      - name: Test
+        run: yarn test
+
+      - name: Compile lists
+        run: yarn compile-lists --out dist/lists
+
+      - name: Compare against the latest release
+        id: compare
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          previous="$(gh release list --limit 1 --json tagName --jq '.[0].tagName // empty')"
+          if [ -z "$previous" ]; then
+            echo "No previous release; publishing the first one."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo "Latest release: $previous"
+          mkdir -p previous-release
+          # A release whose assets cannot be downloaded is treated as a change rather than a
+          # match, so a publish is never skipped on the strength of a failed comparison.
+          if ! gh release download "$previous" --dir previous-release --pattern '*.lexdi' --clobber; then
+            echo "Could not download $previous assets; publishing."
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          if diff --recursive --brief previous-release dist/lists; then
+            echo "Compiled output is byte-identical to $previous; nothing to publish."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Choose a release tag
+        id: tag
+        if: steps.compare.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          # The date comes from the triggering commit rather than the clock, so a re-run
+          # of this workflow reproduces the same tag.
+          date="$(git log -1 --format=%aI "$GITHUB_SHA" | cut -c1-10)"
+          base="wordlists-${date//-/.}"
+
+          tag="$base"
+          suffix=1
+          while gh release view "$tag" >/dev/null 2>&1; do
+            tag="$base.$suffix"
+            suffix=$((suffix + 1))
+          done
+
+          echo "Release tag: $tag"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Create the release
+        if: steps.compare.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+          gh release create "$TAG" \
+            --target "$GITHUB_SHA" \
+            --title "Word lists $TAG" \
+            --notes "Compiled \`.lexdi\` artifacts for the word list sources at ${GITHUB_SHA}." \
+            dist/lists/*.lexdi
+
+      - name: Notify the app repository
+        if: steps.compare.outputs.changed == 'true'
+        env:
+          # Registration of this secret is deferred; without it the dispatch is skipped
+          # rather than failing a publish that has already succeeded.
+          DISPATCH_TOKEN: ${{ secrets.LEXDI_DISPATCH_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${DISPATCH_TOKEN:-}" ]; then
+            echo "LEXDI_DISPATCH_TOKEN is not set; skipping the repository dispatch to fbartho/lexdi."
+            exit 0
+          fi
+
+          GH_TOKEN="$DISPATCH_TOKEN" gh api \
+            --method POST \
+            /repos/fbartho/lexdi/dispatches \
+            --field event_type=wordlists-updated \
+            --field client_payload[release_tag]="$TAG"

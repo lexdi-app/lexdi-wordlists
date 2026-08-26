@@ -1,0 +1,22 @@
+{
+	"_meta_": {
+		"name": "2026 AI Terms",
+		"schemaVersion": 1,
+		"languages": [
+			"en-US"
+		],
+		"version": "2026-07-20",
+		"last_modified": "2026-07-20T18:04:00Z",
+		"refreshUrl": "https://lexdi.app/lists/2026-ai.lexdi",
+		"license": "CC0-1.0",
+		"sourceSha": "21e57338d8e96b6a4eed7a0dc5a2485e30b11f7f59474b694fde25f978a60c05"
+	},
+	"entries": [
+		{
+			"word": "agentification",
+			"action": "add",
+			"definition": "Restructuring a task or workflow to be executable by an autonomous AI agent.",
+			"added": "2026-07-23"
+		}
+	]
+}

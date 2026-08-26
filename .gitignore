@@ -10,3 +10,6 @@ node_modules/
 
 # wordlist-filter output, regenerated per run
 filter-output/
+
+# compiled .lexdi artifacts, rebuilt by the publish pipeline and never committed
+dist/

@@ -1,0 +1,16 @@
+{
+	"$comment": "Per-list `_meta_` the compiler stamps into published artifacts (FORMAT.md §4.4). These are pipeline configuration, never derived from the TSV. `defaults` applies to every list; a `lists` entry overrides it key by key. Adding a list here is part of adding its .lexdi.tsv source.",
+	"defaults": {
+		"license": "CC0-1.0",
+		"languages": ["en-US"],
+		"refreshUrlBase": "https://lexdi.app/lists/"
+	},
+	"lists": {
+		"2026-ai": { "name": "2026 AI Terms" },
+		"2026-all": { "name": "2026 All" },
+		"2026-developer": { "name": "2026 Developer Terms" },
+		"2026-slang": { "name": "2026 Slang" },
+		"all": { "name": "All" },
+		"all-developer": { "name": "All Developer" }
+	}
+}

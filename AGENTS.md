@@ -30,4 +30,6 @@ Word-list contributions here are dedicated to the public domain under CC0 on mer
 
 ## Out of scope for this repo
 
-This repo is word-list sources, plus `tools/wordlist-filter` which runs the system-dictionary comparison against them. The Lexdi app and the internals of the publish pipeline live elsewhere and are not relevant to a contribution here. If a task seems to require changing one of them, it does not belong in this repo — say so rather than working around it.
+This repo is word-list sources, plus the tooling that checks and publishes them: `tools/wordlist-filter` for the system-dictionary comparison, and `scripts/compile-lists.mts` for the TSV-to-`.lexdi` compile that runs on merge. The Lexdi app itself lives elsewhere and is not relevant to a contribution here. If a task seems to require changing it, it does not belong in this repo — say so rather than working around it.
+
+A word-list contribution never needs to touch the compiler, the schemas under `schema/`, or `lists/lists.config.json`. That last file carries the per-list `_meta_` the pipeline stamps, so a pull request adding a new list adds an entry there alongside the new `.lexdi.tsv`.

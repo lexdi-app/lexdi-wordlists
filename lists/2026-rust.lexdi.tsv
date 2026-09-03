@@ -1,0 +1,18 @@
+# Lexdi word list: 2026 Rust
+word	action
+bindgen	add
+cdylib	add
+chumsky	add
+clippy	add
+heapless	add
+napi	add
+nextest	add
+peekable	add
+pointee	add
+rustls	add
+serde	add
+sqlx	add
+sstable	add
+thiserror	add
+tinyvec	add
+vecdeque	add

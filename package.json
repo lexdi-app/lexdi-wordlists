@@ -10,7 +10,7 @@
 		"danger:pr": "danger pr -d scripts/danger/dangerfile.ts",
 		"fix-lists": "node scripts/fix-lists.mts",
 		"compile-lists": "node scripts/compile-lists.mts",
-		"test": "node --test scripts/lib/*.test.mts"
+		"test": "node --test scripts/lib/*.test.mts scripts/danger/lib/*.test.mts"
 	},
 	"devDependencies": {
 		"@types/node": "^26.3.0",

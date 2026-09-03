@@ -303,6 +303,7 @@ export function normalizeList(contents: string): string {
 	return emitted.join("\n") + "\n";
 }
 
+/** A trailing tab is a blank optional column (FORMAT.md §2), never trimmed. */
 function normalizeLine(raw: string): string {
-	return raw.replace(/\r$/, "").replace(/(?<!\t)[ \t]+$/, "");
+	return raw.replace(/\r$/, "").replace(/ +$/, "");
 }

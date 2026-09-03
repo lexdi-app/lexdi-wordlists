@@ -2,4 +2,7 @@
 word	action
 2026-ai.lexdi	include
 2026-developer.lexdi	include
+2026-rust.lexdi	include
 2026-slang.lexdi	include
+2026-swift-apple.lexdi	include
+2026-video-games.lexdi	include
